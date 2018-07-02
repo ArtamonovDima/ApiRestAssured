@@ -9,6 +9,13 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
+        <aspectj.version>1.8.10</aspectj.version>
+        <allure.version>{latest-allure-version}</allure.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <testRail.testsId>defaultValue</testRail.testsId>
+        <testRail.caseId>defaultValue</testRail.caseId>
+        <testRail.runId>0</testRail.runId>
         <testng.version>6.11</testng.version>
         <rest-assured.version>3.0.3</rest-assured.version>
         <gson.version>2.8.0</gson.version>
@@ -16,6 +23,21 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-testng</artifactId>
+            <version>2.0-BETA21</version>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-java-commons</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.8.10</version>
+        </dependency>
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -50,5 +72,70 @@
             <version>${hamcrest.version}</version>
         </dependency>
     </dependencies>
+    <build>
+
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.20</version>
+
+
+                <configuration>
+                    <testFailureIgnore>false</testFailureIgnore>
+                    <argLine> -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar" </argLine>
+                    <systemPropertyVariables>
+                        <testRail.runId>${testRail.runId}</testRail.runId>
+                        <testRail.testsId>${testRail.testsId}</testRail.testsId>
+                        <testRail.caseId>${testRail.caseId}</testRail.caseId>
+                    </systemPropertyVariables>
+                </configuration>
+
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjweaver</artifactId>
+                        <version>${aspectj.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <resultsDirectory>allure-results</resultsDirectory>
+                    <reportVersion>2.4.1</reportVersion>
+                    <propertiesFilePath>src/main/resources/allure.properties</propertiesFilePath>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+
+    <reporting>
+        <excludeDefaults>true</excludeDefaults>
+        <plugins>
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>2.9</version>
+            </plugin>
+        </plugins>
+    </reporting>
 
 </project>
